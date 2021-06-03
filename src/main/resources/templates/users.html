@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Users</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+<body>
+<div class="row-fluid">
+    <div>
+        <nav class="navbar navbar-flex fixed-top bg-dark text-light">
+            <h5>
+                <b>
+                    <span data-th-text="${users.email}"></span>
+                </b>
+                <span> with roles: </span>
+                <span id="current_user_roles" data-th-text="${users.roles}"></span>
+            </h5>
+            <form th:action="@{/logout}" method="post">
+                <a href="/logout">
+                    <h6 class="text-secondary text-right">Logout</h6>
+                </a>
+            </form>
+        </nav>
+    </div>
+    <div class="row no-gutters vh-100">
+        <div class="col-2 pt-3 m-0 p-0">
+            <br>
+            <br>
+            <div class="list-group border-0">
+                <a data-toggle="tab" id="adminPageLeftNavButton" onclick="refreshUsersTable()" href="#adminPage"
+                   class="nav-link active list-group-item list-group-item-action border-0">Admin</a>
+
+                <a data-toggle="tab" id="userPageLeftNavButton" onclick="refreshCurrentUserTable()" href="#userPage"
+                   class="list-group-item list-group-item-action border-0">User</a>
+            </div>
+        </div>
+        <div class="col-9 m-3">
+            <br>
+            <div class="tab-content">
+                <br>
+                <div class="tab-pane container active" id="adminPage">
+                    <h1 class="font-weight-bold">Admin panel</h1>
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li class="nav-item">
+                            <a id="userTablePage" class="nav-link active" role="tab" data-toggle="tab" href="#userTable">Users
+                                table</a>
+                        </li>
+                        <li th:if="${users.roles}" class="nav-item">
+                            <a id="newUserPage" class="nav-link" role="tab" data-toggle="tab" href="#newUser">New User</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content" id="panelNewAndTable">
+                        <div class="tab-pane container active" id="userTable">
+                            <br>
+                            <h4>All users</h4>
+                            <table class="table table-striped" id="usersTable">
+                                <thead class="bg-light">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>First Name</th>
+                                    <th>Last Name</th>
+                                    <th>Age</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Edit</th>
+                                    <th>Delete</th>
+                                </tr>
+                                </thead>
+                                <tbody id="usersTableBody" class="tbodyAll">
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="tab-pane fade" id="newUser">
+                            <div class="tab-content">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <b>Add new user</b>
+                                    </div>
+                                    <div class="card-body" align="center">
+                                        <div class="input-group" style="width:255px;">
+                                            <div class="container">
+                                                <fieldset class="form-group">
+                                                    <label class="font-weight-bolder text-center">First Name</label>
+                                                    <input id="firstNameCreate" class="form-control"
+                                                           name="username"
+                                                           placeholder="Enter your first name"
+                                                           type="text">
+
+                                                </fieldset>
+
+                                                <fieldset class="form-group">
+                                                    <label class="font-weight-bolder">Last Name</label>
+
+                                                    <input id="lastNameCreate" class="form-control"
+                                                           name="lastname"
+                                                           placeholder="Enter your last name"
+                                                           type="text">
+                                                </fieldset>
+
+                                                <fieldset class="form-group">
+                                                    <label class="font-weight-bolder">Age</label>
+                                                    <input id="ageCreate" class="form-control"
+                                                           name="age"
+                                                           placeholder="Enter your age"
+                                                           type="number">
+                                                </fieldset>
+
+                                                <fieldset class="form-group">
+                                                    <label class="font-weight-bolder">Email</label>
+
+                                                    <input id="emailCreate" class="form-control"
+                                                           name="email"
+                                                           placeholder="Enter your email"
+                                                           type="email">
+                                                </fieldset>
+
+                                                <fieldset class="form-group">
+                                                    <label class="font-weight-bolder">Password</label>
+
+                                                    <input id="passwordCreate" class="form-control"
+                                                           name="password"
+                                                           placeholder="Enter your password"
+                                                           type="password">
+                                                </fieldset>
+                                                <fieldset class="form-group">
+                                                    <label class="font-weight-bolder">Role</label>
+                                                    <div class="select" style="width:225px;" align="center">
+                                                        <select id="rolesCreate" name="roles" multiple size="2"
+                                                                style="width: 225px; ">
+                                                            <option > ADMIN </option>
+                                                            <option selected > USER </option>
+                                                        </select>
+                                                    </div>
+                                                </fieldset>
+                                                <input id="add_button" onclick="createUser()" type="button"
+                                                       class="btn btn-success"
+                                                       value="Add new user"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane container" id="userPage">
+                    <h1 class="font-weight-bold">User information-page</h1>
+                    <div class="tab-content">
+                        <div class="tab-pane container active">
+                            <div>
+                                <br>
+                                <h4>About user</h4>
+                                <table id="currentUserTable" class="table table-striped">
+                                    <thead class="bg-light">
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>First Name</th>
+                                        <th>Last Name</th>
+                                        <th>Age</th>
+                                        <th>Email</th>
+                                        <th>Role</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="currentUserTableBody">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-2">
+        </div>
+    </div>
+    <div class="modal fade" id="modalEdit">
+        <div class="modal-dialog ">
+            <div class="modal-content">
+                <div class="row">
+                    <div class="col-2"></div>
+                    <div class="col-8">
+                        <!-- Modal Header -->
+                        <div class="modal-header">
+                            <h4 class="modal-title">Edit user</h4>
+                            <button type="button" class="close" data-dismiss="modal">×</button>
+                        </div>
+                        <!-- Modal body -->
+                        <form class="form-singin form-horizontal" id="userEditModal">
+                            <div class="modal-body">
+                                <input type="hidden" class="form-control" name="id">
+                                <b><p class="text-center mb-0 pb-0 ">First name</p></b>
+                                <input type="text" class="form-control" name="username"
+                                       id="usernameE">
+                                <b><p class="text-center mb-0 pb-0">Last name</p></b>
+                                <input type="text" class="form-control" name="lastname"
+                                       id="lastnameE">
+                                <b><p class="text-center mb-0 pb-0">Age</p></b>
+                                <input type="number" class="form-control" name="age"
+                                       id="ageE">
+                                <b><p class="text-center mb-0 pb-0">Email</p></b>
+                                <input type="email" class="form-control" name="email"
+                                       id="emailE">
+                                <b><p class="text-center mb-0 pb-0">Password</p></b>
+                                <input type="text" class="form-control" name="password"
+                                       id="passwordE">
+                                <b><p class="text-center mb-0 pb-0">Role</p></b>
+                                <div class="select" align="center">
+                                    <select class="form-control" id="rolesSelect" name="roles" multiple
+                                            size="2">
+                                        <option class="form-control">ADMIN</option>
+                                        <option class="form-control">USER</option>
+                                    </select>
+                                </div>
+                                <br>
+                            </div>
+                            <!-- Modal footer -->
+                            <div class="modal-footer">
+                                <input id="edit_button" class="btn btn-info" type="button" value="Edit">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="col-2"></div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script src="/users.js"></script>
+</body>
+</html>
